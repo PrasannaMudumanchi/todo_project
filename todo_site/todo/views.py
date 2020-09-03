@@ -1,21 +1,29 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import Todo
-from .forms import TodoForm
+from datetime import datetime
 
 
 # Create your views here.
 def index(request):
     items_list = Todo.objects.order_by("-date")
     if request.method == "POST":
-        form = TodoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('todo')
-    form = TodoForm()
+        title = request.POST.get("title","")
+        details = request.POST.get("details","")
+
+        to_do = Todo(
+            title=title,
+            details=details,
+            date = datetime.now()
+        )
+        to_do.save()
+        return redirect('todo')
+        # form = TodoForm(request.POST)
+        # if form.is_valid():
+        #     form.save()
+        #     return redirect('todo')
 
     page = {
-        "forms":form,
         "list":items_list,
         "title":"TODO LIST",
     }

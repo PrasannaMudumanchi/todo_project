@@ -1,4 +1,3 @@
-{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -14,23 +13,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!--style-->
   <style>
-    /* .card {
-
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5),
-        0 6px 20px 0 rgba(0, 0, 0, 0.39);
-      background: rgb(176, 152, 241);
-      margin-bottom: 5%;
-      border-radius: 25px;
-      padding: 2%;
-      overflow: auto;
-      resize: both;
-      text-overflow: ellipsis;
-    } */
-
-    .card:hover {
-      background: rgb(235, 142, 238);
-    }
-
     .submit_form {
 
       text-align: center;
@@ -59,6 +41,11 @@
       bottom: 25px;
       right: 25px;
     }
+
+    #title_error,
+    #details_error {
+      color: red;
+    }
   </style>
 
 </head>
@@ -73,8 +60,10 @@
   {% endfor %}
   {% endif %}
 
-  <div style="text-align: center; padding: 20px;"><h1>TO-DO LIST</h1></div>
-  
+  <div style="text-align: center; padding: 20px;">
+    <h1>TO-DO LIST</h1>
+  </div>
+
 
   <div class="row">
 
@@ -117,19 +106,28 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form method="POST">
-          <div class="modal-body">
+          <form onsubmit="return validate()" method="POST" name="todo_form">
+            <div class="modal-body">
               {% csrf_token %}
-              {{forms|crispy}}
-              <center>
-                <!-- <input type="submit" class="btn btn-default" value="submit" /> -->
-              </center>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
-          </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Title:</label>
+                <div class="col-sm-10">
+                  <input type="text" name="title" class="form-control" id="task_title" placeholder="Enter Title">
+                </div>
+                <div id="title_error"></div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="task_details">Details:</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control" rows="5" id="task_details" name="details"></textarea>
+                </div>
+                <div id="details_error"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
           </form>
         </div>
       </div>
@@ -137,5 +135,27 @@
   </div>
   </div>
 </body>
+
+<script type="text/javascript">
+  // Form validation code will come here.
+  function validate() {
+    var title = document.getElementById('task_title');
+    var details = document.getElementById('task_details');
+
+    var submit = true;
+
+    if (title.value == "") {
+      document.getElementById('title_error').innerHTML = "Title Required!"
+      title.focus();
+      submit = false;
+    }
+    if (details.value == "") {
+      document.getElementById('details_error').innerHTML = "Details Required!"
+      details.focus();
+      submit = false;
+    }
+    return submit;
+  }
+</script>
 
 </html>
