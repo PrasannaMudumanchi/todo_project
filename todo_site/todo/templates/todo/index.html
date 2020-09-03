@@ -7,41 +7,63 @@
   <meta charset="utf-8">
   <title>{{title}}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!--style-->
   <style>
-  .card {
+    /* .card {
 
-   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5),
-               0 6px 20px 0 rgba(0,0,0,0.39);
-   background: rgb(176, 152, 241);
-   margin-bottom : 5%;
-   border-radius: 25px;
-   padding : 2%;
-   overflow: auto;
-   resize: both;
-   text-overflow: ellipsis;
-  }
-  .card:hover{
-    background: rgb(235, 142, 238);
-  }
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5),
+        0 6px 20px 0 rgba(0, 0, 0, 0.39);
+      background: rgb(176, 152, 241);
+      margin-bottom: 5%;
+      border-radius: 25px;
+      padding: 2%;
+      overflow: auto;
+      resize: both;
+      text-overflow: ellipsis;
+    } */
 
-  .submit_form{
+    .card:hover {
+      background: rgb(235, 142, 238);
+    }
 
-    text-align: center;
-    padding: 3%;
-    background: rgb(174, 203, 236);
-    border-radius: 25px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4),
-                0 6px 20px 0 rgba(0,0,0,0.36);
-  }
+    .submit_form {
+
+      text-align: center;
+      padding: 3%;
+      background: rgb(174, 203, 236);
+      border-radius: 25px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4),
+        0 6px 20px 0 rgba(0, 0, 0, 0.36);
+    }
+
+    #add_button {
+      background-color: #ffc107;
+      color: black;
+      border-color: #383d3f;
+      width: 70px;
+      height: 70px;
+      padding: 10px 16px;
+      border-radius: 35px;
+      font-size: 24px;
+      /* line-height: 1.33; */
+
+    }
+
+    #mybutton {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+    }
   </style>
 
 </head>
 
-<body  class="container-fluid">
+<body class="container-fluid">
 
   {% if messages %}
   {% for message in messages %}
@@ -51,44 +73,69 @@
   {% endfor %}
   {% endif %}
 
-  <center class="row">
-    <h1><i>TODO LIST</i></h1>
-    <hr />
-  </center>
+  <div style="text-align: center; padding: 20px;"><h1>TO-DO LIST</h1></div>
+  
 
   <div class="row">
 
     <div class="col-md-8">
-
-      {% for i in list %}
-      <div class="card">
-        <center><b>{{i.title}}</b></center>
-        <hr/>
-        {{i.date}}
-        <hr/>
-        {{i.details}}
-        <br />
-        <br />
-        <form action="/del/{{i.id}}" method="POST" style=" padding-right: 4%; padding-bottom: 3%;">
-          {% csrf_token %}
-          <button value="remove" type="submit"  class="btn btn-primary" style="float: right;"><span class="glyphicon glyphicon-trash"></span> &nbsp; remove</button>
-        </form>
+      <div class="card-deck">
+        {% for i in list %}
+        <div class="card bg-warning">
+          <div class="card-header">{{i.title}}</div>
+          <div class="card-body">
+            <p class="card-text">{{i.details}}</p>
+          </div>
+          <div class="card-footer">
+            <form action="/del/{{i.id}}" method="POST" style=" padding-right: 4%; padding-bottom: 3%;">
+              {% csrf_token %}
+              <button value="remove" type="submit" class="btn" style="float: right;"><i
+                  class="fa fa-trash"></i></button>
+            </form>
+          </div>
+        </div>
+        {% endfor%}
       </div>
-      {% endfor%}
+
     </div>
-    <div class="col-md-1"> </div>
-    <div class="col-md-3" >
-      <div  class="submit_form">
-      <form  method="POST">
-        {% csrf_token %}
-        {{forms|crispy}}
-        <center>
-        <input type="submit" class="btn btn-default" value="submit" />
-      </center>
-      </form>
+
+    <!-- Button trigger modal -->
+    <div id="mybutton">
+      <button id="add_button" type="button" class="btn btn-primary float-right" data-toggle="modal"
+        data-target="#exampleModal">
+        +
+      </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add To Do</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="POST">
+          <div class="modal-body">
+              {% csrf_token %}
+              {{forms|crispy}}
+              <center>
+                <!-- <input type="submit" class="btn btn-default" value="submit" /> -->
+              </center>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+  </div>
 </body>
 
 </html>
